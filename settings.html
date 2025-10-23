@@ -25,97 +25,88 @@
       input.num { width: 200px; }
       .preview { margin-top: 16px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; }
       .actions { margin-top: 16px; display: flex; gap: 8px; }
-      .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; align-items: start; }
-      .grid-2 .wide { grid-column: 1 / -1; }
     </style>
   </head>
   <body>
     <h2>FLOAT QUOTE Settings</h2>
-    <div class="grid-2">
-      <h3 class="wide">Your Quote</h3>
-      <div class="row wide">
-        <label for="text">Text</label>
-        <input id="text" type="text" placeholder="your text goes here" />
-      </div>
-      <div class="section">
-        <h3>Font Settings</h3>
-        <div class="row">
-          <label for="fontFamily">Font family</label>
-          <select id="fontFamily">
-            <option value="system-ui">System UI</option>
-            <option value="Lexend, sans-serif">Lexend</option>
-            <option value="Playfair Display, serif">Playfair Display</option>
-            <option value="DM Sans, sans-serif">DM Sans</option>
-            <option value="Bricolage Grotesque, sans-serif">Bricolage Grotesque</option>
-          </select>
-          <label for="fontWeight">Weight</label>
-          <select id="fontWeight">
-            <option value="300">Light</option>
-            <option value="400">Regular</option>
-            <option value="600">SemiBold</option>
-            <option value="700">Bold</option>
-          </select>
-        </div>
-        <div class="row">
-          <label for="fontSize">Font size (px)</label>
-          <input id="fontSize" class="num" type="number" min="8" max="300" />
-          <label for="color">Color</label>
-          <input id="color" type="color" />
-        </div>
-      </div>
-      <div class="section">
-        <h3>Layout</h3>
-        <div class="row">
-          <label for="textAlign">Horizontal align</label>
-          <select id="textAlign">
-            <option value="left">Left</option>
-            <option value="center">Center</option>
-            <option value="right">Right</option>
-          </select>
-        </div>
-        <div class="row">
-          <label for="verticalAlign">Vertical align</label>
-          <select id="verticalAlign">
-            <option value="flex-start">Top</option>
-            <option value="center">Center</option>
-            <option value="flex-end">Bottom</option>
-          </select>
-        </div>
-        <div class="row">
-          <label for="display">Display</label>
-          <select id="display">
-            <option value="primary">Primary</option>
-            <option value="secondary">Secondary</option>
-          </select>
-        </div>
-        <div class="row">
-          <label for="padding">Padding (px)</label>
-          <input id="padding" class="num" type="number" min="0" max="200" />
-        </div>
-      </div>
-      <div class="section">
-        <h3>Drop Shadow</h3>
-        <div class="row">
-          <label for="shadowColor">Color</label>
-          <input id="shadowColor" type="color" />
-        </div>
-        <div class="row">
-          <label for="shadowOpacity">Opacity</label>
-          <input id="shadowOpacity" class="num" type="number" min="0" max="1" step="0.01" />
-        </div>
-        <div class="row">
-          <label for="shadowOffsetX">Offset X (px)</label>
-          <input id="shadowOffsetX" class="num" type="number" min="-200" max="200" />
-        </div>
-        <div class="row">
-          <label for="shadowOffsetY">Offset Y (px)</label>
-          <input id="shadowOffsetY" class="num" type="number" min="-200" max="200" />
-        </div>
-        <div class="row">
-          <label for="shadowBlur">Blur (px)</label>
-          <input id="shadowBlur" class="num" type="number" min="0" max="200" />
-        </div>
-      </div>
+    <h3>Your Quote</h3>
+    <div class="row">
+      <label for="text">Text</label>
+      <input id="text" type="text" placeholder="your text goes here" />
+    </div>
+    <h3>Font Settings</h3>
+    <div class="row">
+      <label for="fontFamily">Font family</label>
+      <select id="fontFamily">
+        <option value="system-ui">System UI</option>
+        <option value="Lexend, sans-serif">Lexend</option>
+        <option value="Playfair Display, serif">Playfair Display</option>
+        <option value="DM Sans, sans-serif">DM Sans</option>
+        <option value="Bricolage Grotesque, sans-serif">Bricolage Grotesque</option>
+      </select>
+      <label for="fontWeight">Weight</label>
+      <select id="fontWeight">
+        <option value="300">Light</option>
+        <option value="400">Regular</option>
+        <option value="600">SemiBold</option>
+        <option value="700">Bold</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="fontSize">Font size (px)</label>
+      <input id="fontSize" class="num" type="number" min="8" max="300" />
+      <label for="color">Color</label>
+      <input id="color" type="color" />
+    </div>
+    <h3>Layout</h3>
+    <div class="row">
+      <label for="textAlign">Horizontal align</label>
+      <select id="textAlign">
+        <option value="left">Left</option>
+        <option value="center">Center</option>
+        <option value="right">Right</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="verticalAlign">Vertical align</label>
+      <select id="verticalAlign">
+        <option value="flex-start">Top</option>
+        <option value="center">Center</option>
+        <option value="flex-end">Bottom</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="display">Display</label>
+      <select id="display">
+        <option value="primary">Primary</option>
+        <option value="secondary">Secondary</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="padding">Padding (px)</label>
+      <input id="padding" class="num" type="number" min="0" max="200" />
+    </div>
+    <hr>
+    <h3>Drop Shadow</h3>
+    <div class="row">
+      <label for="shadowColor">Color</label>
+      <input id="shadowColor" type="color" />
+    </div>
+    <div class="row">
+      <label for="shadowOpacity">Opacity</label>
+      <input id="shadowOpacity" class="num" type="number" min="0" max="1" step="0.01" />
+    </div>
+    <div class="row">
+      <label for="shadowOffsetX">Offset X (px)</label>
+      <input id="shadowOffsetX" class="num" type="number" min="-200" max="200" />
+    </div>
+    <div class="row">
+      <label for="shadowOffsetY">Offset Y (px)</label>
+      <input id="shadowOffsetY" class="num" type="number" min="-200" max="200" />
+    </div>
+    <div class="row">
+      <label for="shadowBlur">Blur (px)</label>
+      <input id="shadowBlur" class="num" type="number" min="0" max="200" />
     </div>
 
     <div class="actions">
