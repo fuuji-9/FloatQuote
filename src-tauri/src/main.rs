@@ -9,6 +9,30 @@ use tauri::{
 use tauri_plugin_autostart::MacosLauncher;
 
 #[cfg(target_os = "windows")]
+fn apply_window_styles(window: &Window, click_through: bool) {
+    use raw_window_handle::{HasWindowHandle, RawWindowHandle};
+    use windows::Win32::Foundation::HWND;
+    use windows::Win32::UI::WindowsAndMessaging::{GetWindowLongPtrW, SetWindowLongPtrW, GWL_EXSTYLE, WS_EX_NOACTIVATE, WS_EX_TRANSPARENT};
+
+    if let Ok(handle) = window.window_handle() {
+        if let RawWindowHandle::Win32(h) = handle.as_raw() {
+            unsafe {
+                let hwnd = HWND(h.hwnd.get());
+                let mut ex = GetWindowLongPtrW(hwnd, GWL_EXSTYLE) as isize;
+                // Always prevent activation so focusing overlay doesn't block taskbar
+                ex |= WS_EX_NOACTIVATE.0 as isize;
+                // Toggle native click-through
+                if click_through {
+                    ex |= WS_EX_TRANSPARENT.0 as isize;
+                } else {
+                    ex &= !(WS_EX_TRANSPARENT.0 as isize);
+                }
+                let _ = SetWindowLongPtrW(hwnd, GWL_EXSTYLE, ex);
+            }
+        }
+    }
+}
+#[cfg(target_os = "windows")]
 fn send_window_to_bottom(window: &Window) {
     use raw_window_handle::{HasWindowHandle, RawWindowHandle};
     use windows::Win32::Foundation::HWND;
@@ -36,6 +60,8 @@ fn send_window_to_bottom(window: &Window) {
 #[tauri::command]
 fn set_click_through(window: Window, enabled: bool) {
     let _ = window.set_ignore_cursor_events(enabled);
+    #[cfg(target_os = "windows")]
+    apply_window_styles(&window, enabled);
 }
 
 fn build_tray(app: &AppHandle<Wry>) {
@@ -89,6 +115,8 @@ fn main() {
             #[cfg(target_os = "windows")]
             if let Some(window) = app.get_window("main") {
                 send_window_to_bottom(&window);
+                // Default to non-activatable + click-through to avoid blocking taskbar
+                apply_window_styles(&window, true);
             }
 
             #[cfg(target_os = "windows")]

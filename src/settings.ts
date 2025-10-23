@@ -22,7 +22,7 @@ const DEFAULTS: Settings = {
   textAlign: "left",
   verticalAlign: "flex-start",
   padding: 20,
-  clickThrough: false,
+  clickThrough: true,
 };
 
 let store: Store;
