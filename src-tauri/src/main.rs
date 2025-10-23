@@ -4,6 +4,7 @@ use tauri::{
     AppHandle, Manager, Window, WindowBuilder, Wry,
     menu::{Menu, MenuItem},
     tray::TrayIconBuilder,
+    Emitter,
 };
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 
@@ -13,23 +14,26 @@ fn set_click_through(window: Window, enabled: bool) {
 }
 
 fn build_tray(app: &AppHandle<Wry>) {
-    let mut menu = Menu::new(app).unwrap();
+    let menu = Menu::new(app).unwrap();
     let settings = MenuItem::new(app, "settings", "Settings", true, None).unwrap();
     let quit = MenuItem::new(app, "quit", "Quit", true, None).unwrap();
-    menu = menu.add_item(&settings).unwrap();
-    menu = menu.add_item(&quit).unwrap();
+
+    // Append items to the menu
+    menu.append(&settings).unwrap();
+    menu.append(&quit).unwrap();
 
     let _tray = TrayIconBuilder::new()
         .menu(&menu)
-        .on_menu_event(|app, event| match event.id().as_str() {
-            "settings" => {
-                // Emit event to open settings window from JS side
-                let _ = app.emit("open-settings", ());
+        .on_menu_event({
+            let settings_id = settings.id().clone();
+            let quit_id = quit.id().clone();
+            move |app, event| {
+                if event.id() == settings_id {
+                    let _ = app.emit("open-settings", ());
+                } else if event.id() == quit_id {
+                    app.exit(0);
+                }
             }
-            "quit" => {
-                app.exit(0);
-            }
-            _ => {}
         })
         .build(app)
         .ok();
