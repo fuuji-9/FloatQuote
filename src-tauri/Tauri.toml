@@ -1,3 +1,7 @@
+productName = "Tauri Transparent Text Widget"
+version = "0.1.0"
+identifier = "com.fuuji9.textwidget"
+
 [build]
 beforeDevCommand = "npm run dev"
 beforeBuildCommand = "npm run build"
@@ -9,8 +13,3 @@ windows = [
   { label = "main", title = "", decorations = false, transparent = true, fullscreen = true, resizable = false, visible = true }
 ]
 withGlobalTauri = true
-
-[package]
-productName = "Tauri Transparent Text Widget"
-version = "0.1.0"
-identifier = "com.fuuji9.textwidget"
