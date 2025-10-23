@@ -22,4 +22,4 @@ windows = { version = "0.56", features = ["Win32_UI_WindowsAndMessaging", "Win32
 raw-window-handle = "0.6"
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc.4", features = [] }
+tauri-build = { version = "2.0.0-rc.4", features = ["config-toml"] }
