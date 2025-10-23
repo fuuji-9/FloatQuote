@@ -128,6 +128,7 @@ type Settings = {
   text: string;
   fontFamily: string;
   fontSize: number;
+  letterSpacing: number;
   color: string;
   fontWeight: string;
   textAlign: "left" | "center" | "right";
@@ -145,6 +146,7 @@ const DEFAULTS: Settings = {
   text: "your text goes here",
   fontFamily: "system-ui",
   fontSize: 48,
+  letterSpacing: 0,
   color: "#ffffff",
   fontWeight: "700",
   textAlign: "left",
@@ -182,6 +184,7 @@ function toSettings(): Settings {
   const text = (bindInput<HTMLInputElement>("text").value || DEFAULTS.text).toString();
   const fontFamily = bindInput<HTMLSelectElement>("fontFamily").value;
   const fontSize = Number(bindInput<HTMLInputElement>("fontSize").value) || DEFAULTS.fontSize;
+  const letterSpacing = Number(bindInput<HTMLInputElement>("letterSpacing").value || DEFAULTS.letterSpacing);
   const color = bindInput<HTMLInputElement>("color").value || DEFAULTS.color;
   const fontWeight = bindInput<HTMLSelectElement>("fontWeight").value;
   const textAlign = bindInput<HTMLSelectElement>("textAlign").value as Settings["textAlign"];
@@ -193,13 +196,14 @@ function toSettings(): Settings {
   const shadowOffsetX = Number(bindInput<HTMLInputElement>("shadowOffsetX").value || DEFAULTS.shadowOffsetX);
   const shadowOffsetY = Number(bindInput<HTMLInputElement>("shadowOffsetY").value || DEFAULTS.shadowOffsetY);
   const shadowBlur = Number(bindInput<HTMLInputElement>("shadowBlur").value || DEFAULTS.shadowBlur);
-  return { text, fontFamily, fontSize, color, fontWeight, textAlign, verticalAlign, padding, display, shadowColor, shadowOpacity, shadowOffsetX, shadowOffsetY, shadowBlur };
+  return { text, fontFamily, fontSize, letterSpacing, color, fontWeight, textAlign, verticalAlign, padding, display, shadowColor, shadowOpacity, shadowOffsetX, shadowOffsetY, shadowBlur };
 }
 
 function fillForm(s: Settings) {
   bindInput<HTMLInputElement>("text").value = s.text;
   bindInput<HTMLSelectElement>("fontFamily").value = s.fontFamily;
   bindInput<HTMLInputElement>("fontSize").value = String(s.fontSize);
+  bindInput<HTMLInputElement>("letterSpacing").value = String(s.letterSpacing ?? DEFAULTS.letterSpacing);
   bindInput<HTMLInputElement>("color").value = s.color;
   bindInput<HTMLSelectElement>("fontWeight").value = s.fontWeight;
   bindInput<HTMLSelectElement>("textAlign").value = s.textAlign;
@@ -232,6 +236,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     "text",
     "fontFamily",
     "fontSize",
+    "letterSpacing",
     "color",
     "fontWeight",
     "textAlign",

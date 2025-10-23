@@ -92,6 +92,7 @@ type Settings = {
   text: string;
   fontFamily: string;
   fontSize: number;
+  letterSpacing: number;
   color: string;
   fontWeight: string;
   textAlign: "left" | "center" | "right";
@@ -109,6 +110,7 @@ const DEFAULTS: Settings = {
   text: "your text goes here",
   fontFamily: "system-ui",
   fontSize: 48,
+  letterSpacing: 0,
   color: "#ffffff",
   fontWeight: "700",
   textAlign: "left",
@@ -132,6 +134,7 @@ function applySettings(s: Settings) {
   textEl.textContent = s.text || DEFAULTS.text;
   textEl.style.fontFamily = s.fontFamily;
   textEl.style.fontSize = `${s.fontSize}px`;
+  textEl.style.letterSpacing = `${s.letterSpacing ?? DEFAULTS.letterSpacing}px`;
   textEl.style.color = s.color;
   textEl.style.fontWeight = s.fontWeight;
   textEl.style.textAlign = s.textAlign;
