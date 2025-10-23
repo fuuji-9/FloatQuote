@@ -10,7 +10,11 @@ type Settings = {
   textAlign: "left" | "center" | "right";
   verticalAlign: "flex-start" | "center" | "flex-end";
   padding: number;
-  clickThrough: boolean;
+  shadowColor: string;
+  shadowOpacity: number;
+  shadowOffsetX: number;
+  shadowOffsetY: number;
+  shadowBlur: number;
 };
 
 const DEFAULTS: Settings = {
@@ -22,28 +26,16 @@ const DEFAULTS: Settings = {
   textAlign: "left",
   verticalAlign: "flex-start",
   padding: 20,
-  clickThrough: true,
+  shadowColor: "#000000",
+  shadowOpacity: 0.7,
+  shadowOffsetX: 3,
+  shadowOffsetY: 3,
+  shadowBlur: 10,
 };
 
 let store: Store;
 
-function applyPreview(s: Settings) {
-  const el = document.getElementById("preview-text") as HTMLElement | null;
-  if (!el) return;
-  el.textContent = s.text || DEFAULTS.text;
-  el.style.fontFamily = s.fontFamily;
-  el.style.fontSize = `${s.fontSize}px`;
-  el.style.color = s.color;
-  el.style.fontWeight = s.fontWeight;
-  el.style.textAlign = s.textAlign;
-  const container = el.parentElement as HTMLElement | null;
-  if (container) {
-    container.style.display = "flex";
-    container.style.justifyContent = s.textAlign === "left" ? "flex-start" : s.textAlign === "right" ? "flex-end" : "center";
-    container.style.alignItems = s.verticalAlign;
-    container.style.padding = `${s.padding}px`;
-  }
-}
+// removed local preview; live updates broadcast to the overlay
 
 async function loadSettings(): Promise<Settings> {
   const data = (await store.get<Partial<Settings>>("settings")) || {};
@@ -70,8 +62,12 @@ function toSettings(): Settings {
   const textAlign = bindInput<HTMLSelectElement>("textAlign").value as Settings["textAlign"];
   const verticalAlign = bindInput<HTMLSelectElement>("verticalAlign").value as Settings["verticalAlign"];
   const padding = Number(bindInput<HTMLInputElement>("padding").value) || DEFAULTS.padding;
-  const clickThrough = bindInput<HTMLInputElement>("clickThrough").checked;
-  return { text, fontFamily, fontSize, color, fontWeight, textAlign, verticalAlign, padding, clickThrough };
+  const shadowColor = bindInput<HTMLInputElement>("shadowColor").value || DEFAULTS.shadowColor;
+  const shadowOpacity = Number(bindInput<HTMLInputElement>("shadowOpacity").value || DEFAULTS.shadowOpacity);
+  const shadowOffsetX = Number(bindInput<HTMLInputElement>("shadowOffsetX").value || DEFAULTS.shadowOffsetX);
+  const shadowOffsetY = Number(bindInput<HTMLInputElement>("shadowOffsetY").value || DEFAULTS.shadowOffsetY);
+  const shadowBlur = Number(bindInput<HTMLInputElement>("shadowBlur").value || DEFAULTS.shadowBlur);
+  return { text, fontFamily, fontSize, color, fontWeight, textAlign, verticalAlign, padding, shadowColor, shadowOpacity, shadowOffsetX, shadowOffsetY, shadowBlur };
 }
 
 function fillForm(s: Settings) {
@@ -83,12 +79,15 @@ function fillForm(s: Settings) {
   bindInput<HTMLSelectElement>("textAlign").value = s.textAlign;
   bindInput<HTMLSelectElement>("verticalAlign").value = s.verticalAlign;
   bindInput<HTMLInputElement>("padding").value = String(s.padding);
-  bindInput<HTMLInputElement>("clickThrough").checked = s.clickThrough;
+  bindInput<HTMLInputElement>("shadowColor").value = s.shadowColor;
+  bindInput<HTMLInputElement>("shadowOpacity").value = String(s.shadowOpacity);
+  bindInput<HTMLInputElement>("shadowOffsetX").value = String(s.shadowOffsetX);
+  bindInput<HTMLInputElement>("shadowOffsetY").value = String(s.shadowOffsetY);
+  bindInput<HTMLInputElement>("shadowBlur").value = String(s.shadowBlur);
 }
 
 async function applyAndBroadcast() {
   const settings = toSettings();
-  applyPreview(settings);
   await saveSettings(settings);
   await emit("settings-changed", settings);
 }
@@ -97,7 +96,6 @@ window.addEventListener("DOMContentLoaded", async () => {
   store = await Store.load(".widget-settings.json");
   const s = await loadSettings();
   fillForm(s);
-  applyPreview(s);
 
   [
     "text",
@@ -108,7 +106,11 @@ window.addEventListener("DOMContentLoaded", async () => {
     "textAlign",
     "verticalAlign",
     "padding",
-    "clickThrough",
+    "shadowColor",
+    "shadowOpacity",
+    "shadowOffsetX",
+    "shadowOffsetY",
+    "shadowBlur",
   ].forEach((id) => bindInput<HTMLElement>(id).addEventListener("input", applyAndBroadcast));
 
   bindInput<HTMLButtonElement>("close").addEventListener("click", () => window.close());

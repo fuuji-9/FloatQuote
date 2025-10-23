@@ -4,7 +4,7 @@ use tauri::{
     AppHandle, Manager, Window, WindowBuilder, Wry,
     menu::{Menu, MenuItem},
     tray::TrayIconBuilder,
-    Emitter,
+    WebviewWindowBuilder, WebviewUrl,
 };
 use tauri_plugin_autostart::MacosLauncher;
 
@@ -70,6 +70,18 @@ fn set_click_through(window: Window, enabled: bool) {
     apply_window_styles(&window, enabled);
 }
 
+fn open_settings(app: &AppHandle<Wry>) {
+    if let Some(w) = app.get_window("settings") {
+        let _ = w.set_focus();
+        return;
+    }
+    let _ = WebviewWindowBuilder::new(app, "settings", WebviewUrl::App("/settings.html".into()))
+        .title("Settings")
+        .resizable(true)
+        .visible(true)
+        .build();
+}
+
 fn build_tray(app: &AppHandle<Wry>) {
     let menu = Menu::new(app).unwrap();
     let settings = MenuItem::new(app, "Settings", true, None::<&str>).unwrap();
@@ -79,17 +91,21 @@ fn build_tray(app: &AppHandle<Wry>) {
 
     let settings_id = settings.id().clone();
     let quit_id = quit.id().clone();
-    let _tray = TrayIconBuilder::new()
+    let mut builder = TrayIconBuilder::new()
         .menu(&menu)
         .on_menu_event(move |app, event| {
             if settings_id == event.id() {
-                let _ = app.emit("open-settings", ());
+                open_settings(app);
             } else if quit_id == event.id() {
                 app.exit(0);
             }
-        })
-        .build(app)
-        .ok();
+        });
+
+    if let Some(icon) = app.default_window_icon().cloned() {
+        builder = builder.icon(icon);
+    }
+
+    let _tray = builder.build(app).ok();
 }
 
 fn main() {

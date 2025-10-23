@@ -67,13 +67,27 @@
       <label for="padding">Padding (px)</label>
       <input id="padding" type="number" min="0" max="200" />
     </div>
+    <hr>
+    <h3>Drop Shadow</h3>
     <div class="row">
-      <label for="clickThrough">Click-through overlay</label>
-      <input id="clickThrough" type="checkbox" />
+      <label for="shadowColor">Color</label>
+      <input id="shadowColor" type="color" />
     </div>
-
-    <div class="preview">
-      <div id="preview-text">your text goes here</div>
+    <div class="row">
+      <label for="shadowOpacity">Opacity</label>
+      <input id="shadowOpacity" type="number" min="0" max="1" step="0.01" />
+    </div>
+    <div class="row">
+      <label for="shadowOffsetX">Offset X (px)</label>
+      <input id="shadowOffsetX" type="number" min="-200" max="200" />
+    </div>
+    <div class="row">
+      <label for="shadowOffsetY">Offset Y (px)</label>
+      <input id="shadowOffsetY" type="number" min="-200" max="200" />
+    </div>
+    <div class="row">
+      <label for="shadowBlur">Blur (px)</label>
+      <input id="shadowBlur" type="number" min="0" max="200" />
     </div>
 
     <div class="actions">
@@ -82,4 +96,3 @@
     </div>
   </body>
   </html>
-

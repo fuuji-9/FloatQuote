@@ -12,7 +12,11 @@ type Settings = {
   textAlign: "left" | "center" | "right";
   verticalAlign: "flex-start" | "center" | "flex-end";
   padding: number;
-  clickThrough: boolean;
+  shadowColor: string;
+  shadowOpacity: number;
+  shadowOffsetX: number;
+  shadowOffsetY: number;
+  shadowBlur: number;
 };
 
 const DEFAULTS: Settings = {
@@ -24,7 +28,11 @@ const DEFAULTS: Settings = {
   textAlign: "left",
   verticalAlign: "flex-start",
   padding: 20,
-  clickThrough: true,
+  shadowColor: "#000000",
+  shadowOpacity: 0.7,
+  shadowOffsetX: 3,
+  shadowOffsetY: 3,
+  shadowBlur: 10,
 };
 
 let store: Store;
@@ -40,14 +48,16 @@ function applySettings(s: Settings) {
   textEl.style.color = s.color;
   textEl.style.fontWeight = s.fontWeight;
   textEl.style.textAlign = s.textAlign;
+  // apply drop shadow
+  const rgba = hexToRgba(s.shadowColor || DEFAULTS.shadowColor, s.shadowOpacity ?? DEFAULTS.shadowOpacity);
+  textEl.style.textShadow = `${s.shadowOffsetX ?? 0}px ${s.shadowOffsetY ?? 0}px ${s.shadowBlur ?? 0}px ${rgba}`;
 
   root.style.justifyContent = s.textAlign === "left" ? "flex-start" : s.textAlign === "right" ? "flex-end" : "center";
   root.style.alignItems = s.verticalAlign;
   root.style.padding = `${s.padding}px`;
-  root.style.pointerEvents = s.clickThrough ? "none" : "auto";
-
-  // Try to inform Rust about click-through for native hit testing
-  invoke("set_click_through", { enabled: s.clickThrough }).catch(() => {});
+  root.style.pointerEvents = "none";
+  // Ensure native click-through is on
+  invoke("set_click_through", { enabled: true }).catch(() => {});
 }
 
 async function loadSettings(): Promise<Settings> {
@@ -88,3 +98,13 @@ window.addEventListener("DOMContentLoaded", async () => {
     ensureSettingsWindow();
   });
 });
+
+function hexToRgba(hex: string, alpha: number): string {
+  const h = hex.replace('#', '').trim();
+  const bigint = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  const a = Math.min(Math.max(alpha, 0), 1);
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
