@@ -20,13 +20,22 @@
         max-width: 800px;
         box-sizing: border-box;
       }
-      .row { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; }
+      .row {
+        display: grid;
+        grid-template-columns: 140px 220px 48px 140px 220px;
+        align-items: center;
+        column-gap: 16px;
+        row-gap: 0;
+        margin-bottom: 10px;
+      }
       h2 { font-size: 2em; margin-top: 0; }
       label { min-width: 140px; }
       input[type="text"], input[type="number"], select { padding: 6px 8px; width: 220px; }
+      input[type="color"] { width: 220px; }
       input.num { width: 220px; }
-      .spacer { margin-left: 48px; }
+      .spacer { margin-left: 0; }
       .fill { flex: 1 1 auto; width: auto; }
+      #text.fill { grid-column: 2 / -1; }
       .preview { margin-top: 16px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; }
       .actions { margin-top: 16px; display: flex; gap: 8px; }
     </style>
