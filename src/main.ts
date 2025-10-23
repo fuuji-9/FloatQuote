@@ -3,6 +3,91 @@ import { Store } from "@tauri-apps/plugin-store";
 import { invoke } from "@tauri-apps/api/core";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
+const FONT_MANIFEST: Record<string, { variable?: string; static?: Record<number, string> }> = {
+  "Lexend": {
+    variable: "/fonts/Lexend/Lexend-VariableFont_wght.ttf",
+    static: {
+      100: "/fonts/Lexend/static/Lexend-Thin.ttf",
+      200: "/fonts/Lexend/static/Lexend-ExtraLight.ttf",
+      300: "/fonts/Lexend/static/Lexend-Light.ttf",
+      400: "/fonts/Lexend/static/Lexend-Regular.ttf",
+      500: "/fonts/Lexend/static/Lexend-Medium.ttf",
+      600: "/fonts/Lexend/static/Lexend-SemiBold.ttf",
+      700: "/fonts/Lexend/static/Lexend-Bold.ttf",
+      800: "/fonts/Lexend/static/Lexend-ExtraBold.ttf",
+      900: "/fonts/Lexend/static/Lexend-Black.ttf",
+    },
+  },
+  "DM Sans": {
+    variable: "/fonts/DM_Sans/DMSans-VariableFont_opsz,wght.ttf",
+    static: {
+      100: "/fonts/DM_Sans/static/DMSans-Thin.ttf",
+      200: "/fonts/DM_Sans/static/DMSans-ExtraLight.ttf",
+      300: "/fonts/DM_Sans/static/DMSans-Light.ttf",
+      400: "/fonts/DM_Sans/static/DMSans-Regular.ttf",
+      500: "/fonts/DM_Sans/static/DMSans-Medium.ttf",
+      600: "/fonts/DM_Sans/static/DMSans-SemiBold.ttf",
+      700: "/fonts/DM_Sans/static/DMSans-Bold.ttf",
+      800: "/fonts/DM_Sans/static/DMSans-ExtraBold.ttf",
+      900: "/fonts/DM_Sans/static/DMSans-Black.ttf",
+    },
+  },
+  "Bricolage Grotesque": {
+    variable: "/fonts/Bricolage_Grotesque/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf",
+    static: {
+      200: "/fonts/Bricolage_Grotesque/static/BricolageGrotesque-ExtraLight.ttf",
+      300: "/fonts/Bricolage_Grotesque/static/BricolageGrotesque-Light.ttf",
+      400: "/fonts/Bricolage_Grotesque/static/BricolageGrotesque-Regular.ttf",
+      500: "/fonts/Bricolage_Grotesque/static/BricolageGrotesque-Medium.ttf",
+      600: "/fonts/Bricolage_Grotesque/static/BricolageGrotesque-SemiBold.ttf",
+      700: "/fonts/Bricolage_Grotesque/static/BricolageGrotesque-Bold.ttf",
+      800: "/fonts/Bricolage_Grotesque/static/BricolageGrotesque-ExtraBold.ttf",
+    },
+  },
+  "Playfair Display": {
+    static: {
+      400: "/fonts/Playfair_Display/static/PlayfairDisplay-Regular.ttf",
+      500: "/fonts/Playfair_Display/static/PlayfairDisplay-Medium.ttf",
+      600: "/fonts/Playfair_Display/static/PlayfairDisplay-SemiBold.ttf",
+      700: "/fonts/Playfair_Display/static/PlayfairDisplay-Bold.ttf",
+      800: "/fonts/Playfair_Display/static/PlayfairDisplay-ExtraBold.ttf",
+      900: "/fonts/Playfair_Display/static/PlayfairDisplay-Black.ttf",
+    },
+  },
+  "Parkinsans": {
+    variable: "/fonts/Parkinsans/Parkinsans-VariableFont_wght.ttf",
+    static: {
+      300: "/fonts/Parkinsans/static/Parkinsans-Light.ttf",
+      400: "/fonts/Parkinsans/static/Parkinsans-Regular.ttf",
+      500: "/fonts/Parkinsans/static/Parkinsans-Medium.ttf",
+      600: "/fonts/Parkinsans/static/Parkinsans-SemiBold.ttf",
+      700: "/fonts/Parkinsans/static/Parkinsans-Bold.ttf",
+      800: "/fonts/Parkinsans/static/Parkinsans-ExtraBold.ttf",
+    },
+  },
+};
+
+function injectFontFaces(family: string) {
+  const existing = document.getElementById("fontfaces") as HTMLStyleElement | null;
+  if (existing) existing.remove();
+  const entry = FONT_MANIFEST[family];
+  if (!entry) return;
+  const style = document.createElement("style");
+  style.id = "fontfaces";
+  let css = "";
+  if (entry.variable) {
+    css += `@font-face{font-family:'${family}';src:url('${entry.variable}') format('truetype');font-weight:100 900;font-style:normal;font-display:swap;}`;
+  }
+  if (entry.static) {
+    const weights = Object.keys(entry.static).map(w => Number(w)).sort((a,b)=>a-b);
+    for (const w of weights) {
+      const url = entry.static[w]!;
+      css += `@font-face{font-family:'${family}';src:url('${url}') format('truetype');font-weight:${w};font-style:normal;font-display:swap;}`;
+    }
+  }
+  style.textContent = css;
+  document.head.appendChild(style);
+}
 type Settings = {
   text: string;
   fontFamily: string;
@@ -50,6 +135,10 @@ function applySettings(s: Settings) {
   textEl.style.color = s.color;
   textEl.style.fontWeight = s.fontWeight;
   textEl.style.textAlign = s.textAlign;
+  // ensure font files are available
+  if (s.fontFamily && s.fontFamily !== "system-ui") {
+    injectFontFaces(s.fontFamily);
+  }
   // apply drop shadow
   const rgba = hexToRgba(s.shadowColor || DEFAULTS.shadowColor, s.shadowOpacity ?? DEFAULTS.shadowOpacity);
   textEl.style.textShadow = `${s.shadowOffsetX ?? 0}px ${s.shadowOffsetY ?? 0}px ${s.shadowBlur ?? 0}px ${rgba}`;
