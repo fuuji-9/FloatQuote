@@ -13,25 +13,67 @@
         font-style: normal;
         font-display: swap;
       }
+      :root {
+        --bg: #ddd;
+        --text: #111;
+        --border: #bbb;
+        --row-bg: transparent;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1f1f1f;
+          --text: #f2f2f2;
+          --border: #444;
+          --row-bg: transparent;
+        }
+      }
+      [data-theme="light"] {
+        --bg: #ddd;
+        --text: #111;
+        --border: #bbb;
+        --row-bg: transparent;
+      }
+      [data-theme="dark"] {
+        --bg: #1f1f1f;
+        --text: #f2f2f2;
+        --border: #444;
+        --row-bg: transparent;
+      }
       body {
         font-family: 'Lexend', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
         padding: 16px;
-        background-color: #ddd;
+        background-color: var(--bg);
+        color: var(--text);
         max-width: 800px;
         box-sizing: border-box;
       }
       .row { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; }
       h2 { font-size: 2em; margin-top: 0; }
-      label { min-width: 140px; }
-      input[type="text"], input[type="number"], select { padding: 6px 8px; width: 220px; }
+      label { min-width: 140px; color: var(--text); }
+      input[type="text"], input[type="number"], select {
+        padding: 6px 8px; width: 220px; color: var(--text);
+        background: var(--row-bg); border: 1px solid var(--border);
+      }
+      input[type="color"] { border: 1px solid var(--border); background: var(--row-bg); }
       input.num { width: 220px; }
       .spacer { margin-left: 48px; }
       .fill { flex: 1 1 auto; width: auto; }
-      .preview { margin-top: 16px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; }
+      .preview { margin-top: 16px; padding: 16px; border: 1px solid var(--border); border-radius: 8px; }
       .actions { margin-top: 16px; display: flex; gap: 8px; }
+      .actions button { color: var(--text); border: 1px solid var(--border); background: var(--row-bg); padding: 8px 12px; }
+      .theme-toggle { position: absolute; top: 12px; right: 16px; display: flex; align-items: center; gap: 8px; }
+      .theme-toggle label { min-width: auto; font-size: 12px; opacity: .8; }
     </style>
   </head>
   <body>
+    <div class="theme-toggle">
+      <label for="themeMode">Theme</label>
+      <select id="themeMode">
+        <option value="system">System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
     <h2>FLOAT QUOTE Settings</h2>
     <h3>Your Quote</h3>
     <div class="row">

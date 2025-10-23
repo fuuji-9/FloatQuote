@@ -169,6 +169,20 @@ async function loadSettings(): Promise<Settings> {
   return { ...DEFAULTS, ...data };
 }
 
+type ThemeMode = "system" | "light" | "dark";
+async function loadTheme(): Promise<ThemeMode> {
+  const t = (await store.get<string>("uiTheme")) as ThemeMode | undefined;
+  return t || "system";
+}
+async function saveTheme(mode: ThemeMode) {
+  await store.set("uiTheme", mode);
+  await store.save();
+}
+function applyTheme(mode: ThemeMode) {
+  if (mode === "system") document.body.removeAttribute("data-theme");
+  else document.body.setAttribute("data-theme", mode);
+}
+
 async function saveSettings(s: Settings) {
   await store.set("settings", s);
   await store.save();
@@ -226,11 +240,22 @@ async function applyAndBroadcast() {
 window.addEventListener("DOMContentLoaded", async () => {
   store = await Store.load(".widget-settings.json");
   const s = await loadSettings();
+  const theme = await loadTheme();
+  applyTheme(theme);
   // populate families and weights before filling form
   populateFamilies();
   injectFontFaces(s.fontFamily);
   populateWeights(s.fontFamily, s.fontWeight);
   fillForm(s);
+  const themeSel = document.getElementById("themeMode") as HTMLSelectElement | null;
+  if (themeSel) {
+    themeSel.value = theme;
+    themeSel.addEventListener("change", async () => {
+      const val = (themeSel.value as ThemeMode) || "system";
+      applyTheme(val);
+      await saveTheme(val);
+    });
+  }
 
   [
     "text",
