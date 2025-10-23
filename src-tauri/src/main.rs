@@ -11,13 +11,14 @@ use tauri_plugin_autostart::MacosLauncher;
 #[cfg(target_os = "windows")]
 fn send_window_to_bottom(window: &Window) {
     use raw_window_handle::{HasWindowHandle, RawWindowHandle};
-    use windows::Win32::UI::WindowsAndMessaging::{SetWindowPos, HWND, HWND_BOTTOM, SWP_NOMOVE, SWP_NOSIZE, SWP_NOACTIVATE, SWP_NOOWNERZORDER, SWP_NOSENDCHANGING, SWP_SHOWWINDOW, WINDOW_POS_FLAGS};
+    use windows::Win32::Foundation::HWND;
+    use windows::Win32::UI::WindowsAndMessaging::{SetWindowPos, HWND_BOTTOM, SWP_NOMOVE, SWP_NOSIZE, SWP_NOACTIVATE, SWP_NOOWNERZORDER, SWP_NOSENDCHANGING, SWP_SHOWWINDOW, SET_WINDOW_POS_FLAGS};
 
     if let Ok(handle) = window.window_handle() {
         if let RawWindowHandle::Win32(h) = handle.as_raw() {
             // Safety: using OS API with a valid HWND from Tauri's window
             unsafe {
-                let hwnd = HWND(h.hwnd as isize);
+                let hwnd = HWND(h.hwnd.get());
                 let _ = SetWindowPos(
                     hwnd,
                     HWND_BOTTOM,
@@ -25,7 +26,7 @@ fn send_window_to_bottom(window: &Window) {
                     0,
                     0,
                     0,
-                    WINDOW_POS_FLAGS(SWP_NOMOVE.0 | SWP_NOSIZE.0 | SWP_NOACTIVATE.0 | SWP_NOOWNERZORDER.0 | SWP_NOSENDCHANGING.0 | SWP_SHOWWINDOW.0),
+                    SET_WINDOW_POS_FLAGS(SWP_NOMOVE.0 | SWP_NOSIZE.0 | SWP_NOACTIVATE.0 | SWP_NOOWNERZORDER.0 | SWP_NOSENDCHANGING.0 | SWP_SHOWWINDOW.0),
                 );
             }
         }
