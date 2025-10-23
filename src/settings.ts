@@ -116,6 +116,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     "shadowBlur",
   ].forEach((id) => bindInput<HTMLElement>(id).addEventListener("input", applyAndBroadcast));
 
+  document.getElementById("position-grid")?.addEventListener("change", applyAndBroadcast);
+
   bindInput<HTMLButtonElement>("close").addEventListener("click", () => window.close());
   bindInput<HTMLButtonElement>("reset").addEventListener("click", async () => {
     fillForm(DEFAULTS);

@@ -23,8 +23,25 @@
       label { min-width: 140px; }
       input[type="text"], input[type="number"], select { padding: 6px 8px; width: 220px; }
       input.num { width: 200px; }
-      .grid { display: grid; grid-template-columns: repeat(3, auto); gap: 8px 16px; align-items: center; }
-      .grid label { min-width: auto; }
+      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; align-items: center; }
+      .grid label {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 48px;
+        border: 1px solid #bbb;
+        border-radius: 8px;
+        background: #f5f5f5;
+        cursor: pointer;
+        user-select: none;
+      }
+      .grid label input { display: none; }
+      .grid label:has(input:checked) {
+        background: #e6e6e6;
+        border-color: #333;
+        box-shadow: inset 0 0 0 2px #333;
+      }
       .preview { margin-top: 16px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; }
       .actions { margin-top: 16px; display: flex; gap: 8px; }
     </style>
@@ -61,15 +78,15 @@
     <div class="row">
       <label>Position</label>
       <div class="grid" id="position-grid">
-        <label><input type="radio" name="position" value="tl"> Top Left</label>
-        <label><input type="radio" name="position" value="tc"> Top Center</label>
-        <label><input type="radio" name="position" value="tr"> Top Right</label>
-        <label><input type="radio" name="position" value="cl"> Middle Left</label>
-        <label><input type="radio" name="position" value="cc"> Middle Center</label>
-        <label><input type="radio" name="position" value="cr"> Middle Right</label>
-        <label><input type="radio" name="position" value="bl"> Bottom Left</label>
-        <label><input type="radio" name="position" value="bc"> Bottom Center</label>
-        <label><input type="radio" name="position" value="br"> Bottom Right</label>
+        <label title="Top Left"><input type="radio" name="position" value="tl"> TL</label>
+        <label title="Top Center"><input type="radio" name="position" value="tc"> TC</label>
+        <label title="Top Right"><input type="radio" name="position" value="tr"> TR</label>
+        <label title="Middle Left"><input type="radio" name="position" value="cl"> ML</label>
+        <label title="Middle Center"><input type="radio" name="position" value="cc"> MC</label>
+        <label title="Middle Right"><input type="radio" name="position" value="cr"> MR</label>
+        <label title="Bottom Left"><input type="radio" name="position" value="bl"> BL</label>
+        <label title="Bottom Center"><input type="radio" name="position" value="bc"> BC</label>
+        <label title="Bottom Right"><input type="radio" name="position" value="br"> BR</label>
       </div>
     </div>
     <div class="row">
