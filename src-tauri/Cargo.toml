@@ -10,11 +10,11 @@ name = "tauri_text_widget_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [dependencies]
-tauri = { version = "2.0.0-rc.4", features = ["unstable"] }
-tauri-build = "2.0.0-rc.4"
-tauri-plugin-opener = "2.0.0-rc.4"
-tauri-plugin-autostart = "2.0.0-rc.4"
-tauri-plugin-store = "2.0.0-rc.4"
+tauri = { version = "2", features = ["unstable", "tray-icon"] }
+tauri-build = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-autostart = "2"
+tauri-plugin-store = "2"
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -22,4 +22,4 @@ windows = { version = "0.56", features = ["Win32_UI_WindowsAndMessaging", "Win32
 raw-window-handle = "0.6"
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc.4", features = ["config-toml"] }
+tauri-build = { version = "2", features = ["config-toml"] }

@@ -13,9 +13,11 @@ fn set_click_through(window: Window, enabled: bool) {
 }
 
 fn build_tray(app: &AppHandle<Wry>) {
-    let menu = Menu::new()
-        .add_item(MenuItem::new("settings", "Settings").unwrap())
-        .add_item(MenuItem::new("quit", "Quit").unwrap());
+    let mut menu = Menu::new(app).unwrap();
+    let settings = MenuItem::new(app, "settings", "Settings", true, None).unwrap();
+    let quit = MenuItem::new(app, "quit", "Quit", true, None).unwrap();
+    menu = menu.add_item(&settings).unwrap();
+    menu = menu.add_item(&quit).unwrap();
 
     let _tray = TrayIconBuilder::new()
         .menu(&menu)
@@ -55,11 +57,12 @@ fn main() {
             }
 
             // Build the tray icon + menu
-            build_tray(app);
+            let handle = app.handle();
+            build_tray(&handle);
 
             #[cfg(target_os = "windows")]
             {
-                use raw_window_handle::{HasWindowHandle, RawWindowHandle};
+                use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
                 if let Some(window) = app.get_window("main") {
                     if let Ok(RawWindowHandle::Win32(handle)) = window.raw_window_handle() {
                         println!("Win32 handle: {:?}", handle);
