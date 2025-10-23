@@ -9,7 +9,8 @@ type Settings = {
   fontSize: number;
   color: string;
   fontWeight: string;
-  position: "tl" | "tc" | "tr" | "cl" | "cc" | "cr" | "bl" | "bc" | "br";
+  textAlign: "left" | "center" | "right";
+  verticalAlign: "flex-start" | "center" | "flex-end";
   padding: number;
   display: "primary" | "secondary";
   shadowColor: string;
@@ -25,7 +26,8 @@ const DEFAULTS: Settings = {
   fontSize: 48,
   color: "#ffffff",
   fontWeight: "700",
-  position: "tl",
+  textAlign: "left",
+  verticalAlign: "flex-start",
   padding: 20,
   display: "primary",
   shadowColor: "#000000",
@@ -47,24 +49,19 @@ function applySettings(s: Settings) {
   textEl.style.fontSize = `${s.fontSize}px`;
   textEl.style.color = s.color;
   textEl.style.fontWeight = s.fontWeight;
-  // map position to alignment
-  const mapH = (p: Settings["position"]): "left"|"center"|"right" => (p.endsWith('l') ? 'left' : p.endsWith('c') ? 'center' : 'right');
-  const mapV = (p: Settings["position"]): "flex-start"|"center"|"flex-end" => (p.startsWith('t') ? 'flex-start' : p.startsWith('c') ? 'center' : 'flex-end');
-  const h = mapH(s.position || DEFAULTS.position);
-  const v = mapV(s.position || DEFAULTS.position);
-  textEl.style.textAlign = h;
+  textEl.style.textAlign = s.textAlign;
   // apply drop shadow
   const rgba = hexToRgba(s.shadowColor || DEFAULTS.shadowColor, s.shadowOpacity ?? DEFAULTS.shadowOpacity);
   textEl.style.textShadow = `${s.shadowOffsetX ?? 0}px ${s.shadowOffsetY ?? 0}px ${s.shadowBlur ?? 0}px ${rgba}`;
 
-  root.style.justifyContent = h === "left" ? "flex-start" : h === "right" ? "flex-end" : "center";
-  root.style.alignItems = v;
+  root.style.justifyContent = s.textAlign === "left" ? "flex-start" : s.textAlign === "right" ? "flex-end" : "center";
+  root.style.alignItems = s.verticalAlign;
   root.style.padding = `0px`;
   // apply edge margin relative to alignment
-  const left = h === "left" ? s.padding : h === "center" ? s.padding : 0;
-  const right = h === "right" ? s.padding : h === "center" ? s.padding : 0;
-  const top = v === "flex-start" ? s.padding : v === "center" ? s.padding : 0;
-  const bottom = v === "flex-end" ? s.padding : v === "center" ? s.padding : 0;
+  const left = s.textAlign === "left" ? s.padding : s.textAlign === "center" ? s.padding : 0;
+  const right = s.textAlign === "right" ? s.padding : s.textAlign === "center" ? s.padding : 0;
+  const top = s.verticalAlign === "flex-start" ? s.padding : s.verticalAlign === "center" ? s.padding : 0;
+  const bottom = s.verticalAlign === "flex-end" ? s.padding : s.verticalAlign === "center" ? s.padding : 0;
   textEl.style.margin = `${top}px ${right}px ${bottom}px ${left}px`;
   root.style.pointerEvents = "none";
   // Ensure native click-through is on

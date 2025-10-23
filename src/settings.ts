@@ -7,7 +7,8 @@ type Settings = {
   fontSize: number;
   color: string;
   fontWeight: string;
-  position: "tl" | "tc" | "tr" | "cl" | "cc" | "cr" | "bl" | "bc" | "br";
+  textAlign: "left" | "center" | "right";
+  verticalAlign: "flex-start" | "center" | "flex-end";
   padding: number;
   display: "primary" | "secondary";
   shadowColor: string;
@@ -23,7 +24,8 @@ const DEFAULTS: Settings = {
   fontSize: 48,
   color: "#ffffff",
   fontWeight: "700",
-  position: "tl",
+  textAlign: "left",
+  verticalAlign: "flex-start",
   padding: 20,
   display: "primary",
   shadowColor: "#000000",
@@ -59,8 +61,8 @@ function toSettings(): Settings {
   const fontSize = Number(bindInput<HTMLInputElement>("fontSize").value) || DEFAULTS.fontSize;
   const color = bindInput<HTMLInputElement>("color").value || DEFAULTS.color;
   const fontWeight = bindInput<HTMLSelectElement>("fontWeight").value;
-  const posInput = document.querySelector<HTMLInputElement>('input[name="position"]:checked');
-  const position = (posInput?.value as Settings["position"]) || DEFAULTS.position;
+  const textAlign = bindInput<HTMLSelectElement>("textAlign").value as Settings["textAlign"];
+  const verticalAlign = bindInput<HTMLSelectElement>("verticalAlign").value as Settings["verticalAlign"];
   const padding = Number(bindInput<HTMLInputElement>("padding").value) || DEFAULTS.padding;
   const display = bindInput<HTMLSelectElement>("display").value as Settings["display"];
   const shadowColor = bindInput<HTMLInputElement>("shadowColor").value || DEFAULTS.shadowColor;
@@ -68,7 +70,7 @@ function toSettings(): Settings {
   const shadowOffsetX = Number(bindInput<HTMLInputElement>("shadowOffsetX").value || DEFAULTS.shadowOffsetX);
   const shadowOffsetY = Number(bindInput<HTMLInputElement>("shadowOffsetY").value || DEFAULTS.shadowOffsetY);
   const shadowBlur = Number(bindInput<HTMLInputElement>("shadowBlur").value || DEFAULTS.shadowBlur);
-  return { text, fontFamily, fontSize, color, fontWeight, position, padding, display, shadowColor, shadowOpacity, shadowOffsetX, shadowOffsetY, shadowBlur };
+  return { text, fontFamily, fontSize, color, fontWeight, textAlign, verticalAlign, padding, display, shadowColor, shadowOpacity, shadowOffsetX, shadowOffsetY, shadowBlur };
 }
 
 function fillForm(s: Settings) {
@@ -77,8 +79,8 @@ function fillForm(s: Settings) {
   bindInput<HTMLInputElement>("fontSize").value = String(s.fontSize);
   bindInput<HTMLInputElement>("color").value = s.color;
   bindInput<HTMLSelectElement>("fontWeight").value = s.fontWeight;
-  const radio = document.querySelector<HTMLInputElement>('input[name="position"][value="' + s.position + '"]');
-  if (radio) radio.checked = true;
+  bindInput<HTMLSelectElement>("textAlign").value = s.textAlign;
+  bindInput<HTMLSelectElement>("verticalAlign").value = s.verticalAlign;
   bindInput<HTMLInputElement>("padding").value = String(s.padding);
   bindInput<HTMLSelectElement>("display").value = s.display;
   bindInput<HTMLInputElement>("shadowColor").value = s.shadowColor;
@@ -116,7 +118,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     "shadowBlur",
   ].forEach((id) => bindInput<HTMLElement>(id).addEventListener("input", applyAndBroadcast));
 
-  document.getElementById("position-grid")?.addEventListener("change", applyAndBroadcast);
+  // no position grid; H/V selects already covered by input listeners
 
   bindInput<HTMLButtonElement>("close").addEventListener("click", () => window.close());
   bindInput<HTMLButtonElement>("reset").addEventListener("click", async () => {
