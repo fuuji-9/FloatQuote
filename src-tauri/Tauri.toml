@@ -10,6 +10,6 @@ frontendDist = "../dist"
 
 [app]
 windows = [
-  { label = "main", title = "", decorations = false, transparent = true, fullscreen = true, resizable = false, visible = true }
+  { label = "main", title = "", decorations = false, transparent = true, fullscreen = false, resizable = false, visible = true, shadow = false, dragDropEnabled = false, alwaysOnBottom = true, skipTaskbar = true }
 ]
 withGlobalTauri = true

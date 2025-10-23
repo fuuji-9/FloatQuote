@@ -12,7 +12,7 @@ use tauri_plugin_autostart::MacosLauncher;
 fn apply_window_styles(window: &Window, click_through: bool) {
     use raw_window_handle::{HasWindowHandle, RawWindowHandle};
     use windows::Win32::Foundation::HWND;
-    use windows::Win32::UI::WindowsAndMessaging::{GetWindowLongPtrW, SetWindowLongPtrW, GWL_EXSTYLE, WS_EX_NOACTIVATE, WS_EX_TRANSPARENT};
+    use windows::Win32::UI::WindowsAndMessaging::{GetWindowLongPtrW, SetWindowLongPtrW, GWL_EXSTYLE, WS_EX_NOACTIVATE, WS_EX_TRANSPARENT, WS_EX_TOOLWINDOW, WS_EX_NOREDIRECTIONBITMAP};
 
     if let Ok(handle) = window.window_handle() {
         if let RawWindowHandle::Win32(h) = handle.as_raw() {
@@ -21,6 +21,10 @@ fn apply_window_styles(window: &Window, click_through: bool) {
                 let mut ex = GetWindowLongPtrW(hwnd, GWL_EXSTYLE) as isize;
                 // Always prevent activation so focusing overlay doesn't block taskbar
                 ex |= WS_EX_NOACTIVATE.0 as isize;
+                // Hide from Alt-Tab and reduce non-client painting quirks
+                ex |= WS_EX_TOOLWINDOW.0 as isize;
+                // Avoid frame redirection artifacts in transparent windows
+                ex |= WS_EX_NOREDIRECTIONBITMAP.0 as isize;
                 // Toggle native click-through
                 if click_through {
                     ex |= WS_EX_TRANSPARENT.0 as isize;
@@ -56,6 +60,8 @@ fn send_window_to_bottom(window: &Window) {
         }
     }
 }
+
+// DWM frame extension removed; we'll rely on transparent webview background instead
 
 #[tauri::command]
 fn set_click_through(window: Window, enabled: bool) {
@@ -102,8 +108,8 @@ fn main() {
                     .title("")
                     .decorations(false)
                     .transparent(true)
+                    .shadow(false)
                     .resizable(false)
-                    .fullscreen(true)
                     .build();
             }
 
@@ -114,9 +120,18 @@ fn main() {
             // Attempt to send window to bottom so it behaves like a wallpaper overlay
             #[cfg(target_os = "windows")]
             if let Some(window) = app.get_window("main") {
+                // Fit to the current monitor instead of using OS fullscreen (avoids artifacts)
+                if let Ok(Some(m)) = window.current_monitor() {
+                    let size = m.size();
+                    let _ = window.set_size(*size);
+                    let _ = window.set_position(tauri::PhysicalPosition { x: 0, y: 0 });
+                }
+                // Hide from taskbar explicitly
+                let _ = window.set_skip_taskbar(true);
                 send_window_to_bottom(&window);
                 // Default to non-activatable + click-through to avoid blocking taskbar
                 apply_window_styles(&window, true);
+                // No DWM extend; transparent webview background should prevent banding
             }
 
             #[cfg(target_os = "windows")]
