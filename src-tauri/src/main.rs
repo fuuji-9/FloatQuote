@@ -70,6 +70,40 @@ fn set_click_through(window: Window, enabled: bool) {
     apply_window_styles(&window, enabled);
 }
 
+#[tauri::command]
+fn set_overlay_display(app: AppHandle<Wry>, which: String) -> Result<(), String> {
+    let which = which.to_lowercase();
+    let Some(window) = app.get_window("main") else { return Err("main window not found".into()); };
+    let Ok(monitors) = window.available_monitors() else { return Err("cannot list monitors".into()); };
+    let primary = window.primary_monitor().ok().flatten();
+    let target = if which == "secondary" {
+        match primary {
+            Some(ref p) => monitors.into_iter().find(|m| m.name() != p.name()),
+            None => None,
+        }
+    } else {
+        primary
+    };
+    if let Some(m) = target {
+        let size = m.size();
+        // try to use monitor position if available (may be negative in virtual coords)
+        #[allow(deprecated)]
+        let pos = m.position();
+        let new_w = size.width.saturating_add(2);
+        let new_h = size.height.saturating_add(2);
+        let _ = window.set_size(tauri::PhysicalSize { width: new_w, height: new_h });
+        let _ = window.set_position(tauri::PhysicalPosition { x: pos.x - 1, y: pos.y - 1 });
+        #[cfg(target_os = "windows")]
+        {
+            send_window_to_bottom(&window);
+            apply_window_styles(&window, true);
+        }
+        Ok(())
+    } else {
+        Err("target monitor not found".into())
+    }
+}
+
 fn open_settings(app: &AppHandle<Wry>) {
     if let Some(w) = app.get_window("settings") {
         let _ = w.set_focus();
@@ -116,7 +150,7 @@ fn main() {
         ))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::default().build())
-        .invoke_handler(tauri::generate_handler![set_click_through])
+        .invoke_handler(tauri::generate_handler![set_click_through, set_overlay_display])
         .setup(|app| {
             // Ensure main window exists with our overlay defaults
             if app.get_window("main").is_none() {

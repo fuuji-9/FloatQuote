@@ -35,6 +35,6 @@ html, body {
   color: white;
   text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
   max-width: 90vw;
-  margin: 20px 0 0 20px; /* replace container padding */
+  margin: 0; /* margins are set dynamically based on alignment */
 }
 /* Remove all unused template styles to avoid unintended backgrounds */

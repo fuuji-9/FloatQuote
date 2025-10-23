@@ -10,6 +10,7 @@ type Settings = {
   textAlign: "left" | "center" | "right";
   verticalAlign: "flex-start" | "center" | "flex-end";
   padding: number;
+  display: "primary" | "secondary";
   shadowColor: string;
   shadowOpacity: number;
   shadowOffsetX: number;
@@ -26,6 +27,7 @@ const DEFAULTS: Settings = {
   textAlign: "left",
   verticalAlign: "flex-start",
   padding: 20,
+  display: "primary",
   shadowColor: "#000000",
   shadowOpacity: 0.7,
   shadowOffsetX: 3,
@@ -62,12 +64,13 @@ function toSettings(): Settings {
   const textAlign = bindInput<HTMLSelectElement>("textAlign").value as Settings["textAlign"];
   const verticalAlign = bindInput<HTMLSelectElement>("verticalAlign").value as Settings["verticalAlign"];
   const padding = Number(bindInput<HTMLInputElement>("padding").value) || DEFAULTS.padding;
+  const display = bindInput<HTMLSelectElement>("display").value as Settings["display"];
   const shadowColor = bindInput<HTMLInputElement>("shadowColor").value || DEFAULTS.shadowColor;
   const shadowOpacity = Number(bindInput<HTMLInputElement>("shadowOpacity").value || DEFAULTS.shadowOpacity);
   const shadowOffsetX = Number(bindInput<HTMLInputElement>("shadowOffsetX").value || DEFAULTS.shadowOffsetX);
   const shadowOffsetY = Number(bindInput<HTMLInputElement>("shadowOffsetY").value || DEFAULTS.shadowOffsetY);
   const shadowBlur = Number(bindInput<HTMLInputElement>("shadowBlur").value || DEFAULTS.shadowBlur);
-  return { text, fontFamily, fontSize, color, fontWeight, textAlign, verticalAlign, padding, shadowColor, shadowOpacity, shadowOffsetX, shadowOffsetY, shadowBlur };
+  return { text, fontFamily, fontSize, color, fontWeight, textAlign, verticalAlign, padding, display, shadowColor, shadowOpacity, shadowOffsetX, shadowOffsetY, shadowBlur };
 }
 
 function fillForm(s: Settings) {
@@ -79,6 +82,7 @@ function fillForm(s: Settings) {
   bindInput<HTMLSelectElement>("textAlign").value = s.textAlign;
   bindInput<HTMLSelectElement>("verticalAlign").value = s.verticalAlign;
   bindInput<HTMLInputElement>("padding").value = String(s.padding);
+  bindInput<HTMLSelectElement>("display").value = s.display;
   bindInput<HTMLInputElement>("shadowColor").value = s.shadowColor;
   bindInput<HTMLInputElement>("shadowOpacity").value = String(s.shadowOpacity);
   bindInput<HTMLInputElement>("shadowOffsetX").value = String(s.shadowOffsetX);
@@ -106,6 +110,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     "textAlign",
     "verticalAlign",
     "padding",
+    "display",
     "shadowColor",
     "shadowOpacity",
     "shadowOffsetX",

@@ -12,6 +12,7 @@ type Settings = {
   textAlign: "left" | "center" | "right";
   verticalAlign: "flex-start" | "center" | "flex-end";
   padding: number;
+  display: "primary" | "secondary";
   shadowColor: string;
   shadowOpacity: number;
   shadowOffsetX: number;
@@ -28,6 +29,7 @@ const DEFAULTS: Settings = {
   textAlign: "left",
   verticalAlign: "flex-start",
   padding: 20,
+  display: "primary",
   shadowColor: "#000000",
   shadowOpacity: 0.7,
   shadowOffsetX: 3,
@@ -54,10 +56,18 @@ function applySettings(s: Settings) {
 
   root.style.justifyContent = s.textAlign === "left" ? "flex-start" : s.textAlign === "right" ? "flex-end" : "center";
   root.style.alignItems = s.verticalAlign;
-  root.style.padding = `${s.padding}px`;
+  root.style.padding = `0px`;
+  // apply edge margin relative to alignment
+  const left = s.textAlign === "left" ? s.padding : s.textAlign === "center" ? s.padding : 0;
+  const right = s.textAlign === "right" ? s.padding : s.textAlign === "center" ? s.padding : 0;
+  const top = s.verticalAlign === "flex-start" ? s.padding : s.verticalAlign === "center" ? s.padding : 0;
+  const bottom = s.verticalAlign === "flex-end" ? s.padding : s.verticalAlign === "center" ? s.padding : 0;
+  textEl.style.margin = `${top}px ${right}px ${bottom}px ${left}px`;
   root.style.pointerEvents = "none";
   // Ensure native click-through is on
   invoke("set_click_through", { enabled: true }).catch(() => {});
+  // Move to selected display
+  invoke("set_overlay_display", { which: s.display }).catch(() => {});
 }
 
 async function loadSettings(): Promise<Settings> {
