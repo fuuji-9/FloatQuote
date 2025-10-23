@@ -5,6 +5,7 @@ devUrl = "http://localhost:1420"
 frontendDist = "../dist"
 
 [app]
+identifier = "com.fuuji9.textwidget"
 windows = [
   { label = "main", title = "", decorations = false, transparent = true, fullscreen = true, resizable = false, visible = true }
 ]
