@@ -21,7 +21,7 @@
       .row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
       label { min-width: 140px; }
       input[type="text"], input[type="number"], select { padding: 6px 8px; width: 220px; }
-      .compact { width: 220px; }
+      input.num { width: 200px; }
       .preview { margin-top: 16px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; }
       .actions { margin-top: 16px; display: flex; gap: 8px; }
     </style>
@@ -42,7 +42,7 @@
         <option value="Bricolage Grotesque, sans-serif">Bricolage Grotesque</option>
       </select>
       <label for="fontWeight">Weight</label>
-      <select id="fontWeight" class="compact">
+      <select id="fontWeight">
         <option value="300">Light</option>
         <option value="400">Regular</option>
         <option value="600">SemiBold</option>
@@ -51,7 +51,7 @@
     </div>
     <div class="row">
       <label for="fontSize">Font size (px)</label>
-      <input id="fontSize" type="number" min="8" max="300" />
+      <input id="fontSize" class="num" type="number" min="8" max="300" />
     </div>
     <div class="row">
       <label for="color">Color</label>
@@ -82,7 +82,7 @@
     </div>
     <div class="row">
       <label for="padding">Padding (px)</label>
-      <input id="padding" type="number" min="0" max="200" />
+      <input id="padding" class="num" type="number" min="0" max="200" />
     </div>
     <hr>
     <h3>Drop Shadow</h3>
@@ -92,19 +92,19 @@
     </div>
     <div class="row">
       <label for="shadowOpacity">Opacity</label>
-      <input id="shadowOpacity" type="number" min="0" max="1" step="0.01" />
+      <input id="shadowOpacity" class="num" type="number" min="0" max="1" step="0.01" />
     </div>
     <div class="row">
       <label for="shadowOffsetX">Offset X (px)</label>
-      <input id="shadowOffsetX" type="number" min="-200" max="200" />
+      <input id="shadowOffsetX" class="num" type="number" min="-200" max="200" />
     </div>
     <div class="row">
       <label for="shadowOffsetY">Offset Y (px)</label>
-      <input id="shadowOffsetY" type="number" min="-200" max="200" />
+      <input id="shadowOffsetY" class="num" type="number" min="-200" max="200" />
     </div>
     <div class="row">
       <label for="shadowBlur">Blur (px)</label>
-      <input id="shadowBlur" type="number" min="0" max="200" />
+      <input id="shadowBlur" class="num" type="number" min="0" max="200" />
     </div>
 
     <div class="actions">
