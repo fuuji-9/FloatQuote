@@ -15,8 +15,8 @@ fn set_click_through(window: Window, enabled: bool) {
 
 fn build_tray(app: &AppHandle<Wry>) {
     let menu = Menu::new(app).unwrap();
-    let settings = MenuItem::new(app, "Settings", true, None).unwrap();
-    let quit = MenuItem::new(app, "Quit", true, None).unwrap();
+    let settings = MenuItem::new(app, "Settings", true, None::<&str>).unwrap();
+    let quit = MenuItem::new(app, "Quit", true, None::<&str>).unwrap();
     menu.append(&settings).unwrap();
     menu.append(&quit).unwrap();
 
@@ -80,3 +80,4 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+
