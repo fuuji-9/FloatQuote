@@ -6,7 +6,17 @@
     <title>Widget Settings</title>
     <script type="module" src="/src/settings.ts" defer></script>
     <style>
-      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 16px; }
+      @font-face {
+        font-family: 'Lexend';
+        src: url('/fonts/Bricolage_Grotesque,DM_Sans,Lexend,Playfair_Display/Lexend/Lexend-VariableFont_wght.ttf') format('truetype');
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: swap;
+      }
+      body {
+        font-family: 'Lexend', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        padding: 16px;
+      }
       .row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
       label { min-width: 140px; }
       input[type="text"], input[type="number"], select { padding: 6px 8px; width: 220px; }
