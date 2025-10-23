@@ -110,7 +110,7 @@ fn open_settings(app: &AppHandle<Wry>) {
         return;
     }
     let _ = WebviewWindowBuilder::new(app, "settings", WebviewUrl::App("/settings.html".into()))
-        .title("Settings")
+        .title("FLOAT QUOTE Settings")
         .resizable(true)
         .visible(true)
         .build();
