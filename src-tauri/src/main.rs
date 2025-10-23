@@ -8,6 +8,30 @@ use tauri::{
 };
 use tauri_plugin_autostart::MacosLauncher;
 
+#[cfg(target_os = "windows")]
+fn send_window_to_bottom(window: &Window) {
+    use raw_window_handle::{HasWindowHandle, RawWindowHandle};
+    use windows::Win32::UI::WindowsAndMessaging::{SetWindowPos, HWND, HWND_BOTTOM, SWP_NOMOVE, SWP_NOSIZE, SWP_NOACTIVATE, SWP_NOOWNERZORDER, SWP_NOSENDCHANGING, SWP_SHOWWINDOW, WINDOW_POS_FLAGS};
+
+    if let Ok(handle) = window.window_handle() {
+        if let RawWindowHandle::Win32(h) = handle.as_raw() {
+            // Safety: using OS API with a valid HWND from Tauri's window
+            unsafe {
+                let hwnd = HWND(h.hwnd as isize);
+                let _ = SetWindowPos(
+                    hwnd,
+                    HWND_BOTTOM,
+                    0,
+                    0,
+                    0,
+                    0,
+                    WINDOW_POS_FLAGS(SWP_NOMOVE.0 | SWP_NOSIZE.0 | SWP_NOACTIVATE.0 | SWP_NOOWNERZORDER.0 | SWP_NOSENDCHANGING.0 | SWP_SHOWWINDOW.0),
+                );
+            }
+        }
+    }
+}
+
 #[tauri::command]
 fn set_click_through(window: Window, enabled: bool) {
     let _ = window.set_ignore_cursor_events(enabled);
@@ -60,6 +84,12 @@ fn main() {
             let handle = app.handle();
             build_tray(&handle);
 
+            // Attempt to send window to bottom so it behaves like a wallpaper overlay
+            #[cfg(target_os = "windows")]
+            if let Some(window) = app.get_window("main") {
+                send_window_to_bottom(&window);
+            }
+
             #[cfg(target_os = "windows")]
             {
                 use raw_window_handle::{HasWindowHandle, RawWindowHandle};
@@ -80,4 +110,3 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
