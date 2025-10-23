@@ -17,13 +17,15 @@
         font-family: 'Lexend', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
         padding: 16px;
         background-color: #ddd;
+        max-width: 800px;
+        box-sizing: border-box;
       }
-      .row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+      .row { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; }
       h2 { font-size: 2em; margin-top: 0; }
       label { min-width: 140px; }
       input[type="text"], input[type="number"], select { padding: 6px 8px; width: 220px; }
       input.num { width: 200px; }
-      .spacer { margin-left: 24px; }
+      .spacer { margin-left: 48px; }
       .fill { flex: 1 1 auto; width: auto; }
       .preview { margin-top: 16px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; }
       .actions { margin-top: 16px; display: flex; gap: 8px; }
@@ -108,7 +110,7 @@
     </div>
 
     <div class="actions">
-      <button id="close">Close</button>
+      <button id="close">Save and Close</button>
       <button id="reset">Reset</button>
     </div>
   </body>
