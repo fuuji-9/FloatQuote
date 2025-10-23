@@ -23,6 +23,8 @@
       label { min-width: 140px; }
       input[type="text"], input[type="number"], select { padding: 6px 8px; width: 220px; }
       input.num { width: 200px; }
+      .grid { display: grid; grid-template-columns: repeat(3, auto); gap: 8px 16px; align-items: center; }
+      .grid label { min-width: auto; }
       .preview { margin-top: 16px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; }
       .actions { margin-top: 16px; display: flex; gap: 8px; }
     </style>
@@ -57,20 +59,18 @@
       <input id="color" type="color" />
     </div>
     <div class="row">
-      <label for="textAlign">Horizontal align</label>
-      <select id="textAlign">
-        <option value="left">Left</option>
-        <option value="center">Center</option>
-        <option value="right">Right</option>
-      </select>
-    </div>
-    <div class="row">
-      <label for="verticalAlign">Vertical align</label>
-      <select id="verticalAlign">
-        <option value="flex-start">Top</option>
-        <option value="center">Center</option>
-        <option value="flex-end">Bottom</option>
-      </select>
+      <label>Position</label>
+      <div class="grid" id="position-grid">
+        <label><input type="radio" name="position" value="tl"> Top Left</label>
+        <label><input type="radio" name="position" value="tc"> Top Center</label>
+        <label><input type="radio" name="position" value="tr"> Top Right</label>
+        <label><input type="radio" name="position" value="cl"> Middle Left</label>
+        <label><input type="radio" name="position" value="cc"> Middle Center</label>
+        <label><input type="radio" name="position" value="cr"> Middle Right</label>
+        <label><input type="radio" name="position" value="bl"> Bottom Left</label>
+        <label><input type="radio" name="position" value="bc"> Bottom Center</label>
+        <label><input type="radio" name="position" value="br"> Bottom Right</label>
+      </div>
     </div>
     <div class="row">
       <label for="display">Display</label>
