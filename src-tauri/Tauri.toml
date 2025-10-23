@@ -2,10 +2,9 @@
 beforeDevCommand = "npm run dev"
 beforeBuildCommand = "npm run build"
 devUrl = "http://localhost:1420"
-distDir = "../dist"
+frontendDist = "../dist"
 
 [app]
 productName = "Tauri Transparent Text Widget"
 version = "0.1.0"
 identifier = "com.fuuji9.textwidget"
-
