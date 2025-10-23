@@ -14,36 +14,30 @@
         font-display: swap;
       }
       :root {
-        --bg: #cfcfcf;
+        --bg: #ddd;
         --text: #111;
         --border: #bbb;
         --row-bg: transparent;
-        --panel-bg: #ffffff;
-        --shadow: 0 6px 18px rgba(0,0,0,0.08);
       }
       @media (prefers-color-scheme: dark) {
         :root {
-          --bg: #161616;
+          --bg: #1f1f1f;
           --text: #f2f2f2;
           --border: #444;
           --row-bg: transparent;
-          --panel-bg: #232323;
-          --shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
       }
       [data-theme="light"] {
-        --bg: #cfcfcf;
+        --bg: #ddd;
         --text: #111;
         --border: #bbb;
         --row-bg: transparent;
-        --panel-bg: #ffffff;
       }
       [data-theme="dark"] {
-        --bg: #161616;
+        --bg: #1f1f1f;
         --text: #f2f2f2;
         --border: #444;
         --row-bg: transparent;
-        --panel-bg: #232323;
       }
       body {
         font-family: 'Lexend', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
@@ -52,9 +46,8 @@
         color: var(--text);
         max-width: 800px;
         box-sizing: border-box;
-        margin: 24px auto;
+        margin: 0;
       }
-      .card { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 16px 20px; position: relative; }
       .row { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; }
       h2 { font-size: 2em; margin-top: 0; }
       label { min-width: 140px; color: var(--text); }
@@ -82,14 +75,13 @@
         <option value="dark">Dark</option>
       </select>
     </div>
-    <div class="card">
-      <h2>FLOAT QUOTE Settings</h2>
-      <h3>Your Quote</h3>
-      <div class="row">
-        <label for="text">Text</label>
-        <input id="text" class="fill" type="text" placeholder="your text goes here" />
-      </div>
-      <h3>Font Settings</h3>
+    <h2>FLOAT QUOTE Settings</h2>
+    <h3>Your Quote</h3>
+    <div class="row">
+      <label for="text">Text</label>
+      <input id="text" class="fill" type="text" placeholder="your text goes here" />
+    </div>
+    <h3>Font Settings</h3>
     <div class="row">
       <label for="fontFamily">Font family</label>
       <select id="fontFamily">
@@ -115,7 +107,7 @@
       <label for="color" class="spacer">Color</label>
       <input id="color" type="color" />
     </div>
-      <h3>Layout</h3>
+    <h3>Layout</h3>
     <div class="row">
       <label for="textAlign">Horizontal align</label>
       <select id="textAlign">
@@ -139,8 +131,8 @@
         <option value="secondary">Secondary</option>
       </select>
     </div>
-      <hr>
-      <h3>Drop Shadow</h3>
+    <hr>
+    <h3>Drop Shadow</h3>
     <div class="row">
       <label for="shadowColor">Color</label>
       <input id="shadowColor" type="color" />
@@ -159,10 +151,9 @@
     </div>
     
 
-      <div class="actions">
-        <button id="close">Save and Close</button>
-        <button id="reset">Reset</button>
-      </div>
+    <div class="actions">
+      <button id="close">Save and Close</button>
+      <button id="reset">Reset</button>
     </div>
   </body>
   </html>
