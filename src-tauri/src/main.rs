@@ -6,7 +6,7 @@ use tauri::{
     tray::TrayIconBuilder,
     Emitter,
 };
-use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
+use tauri_plugin_autostart::MacosLauncher;
 
 #[tauri::command]
 fn set_click_through(window: Window, enabled: bool) {
@@ -15,24 +15,20 @@ fn set_click_through(window: Window, enabled: bool) {
 
 fn build_tray(app: &AppHandle<Wry>) {
     let menu = Menu::new(app).unwrap();
-    let settings = MenuItem::new(app, "settings", "Settings", true, None).unwrap();
-    let quit = MenuItem::new(app, "quit", "Quit", true, None).unwrap();
-
-    // Append items to the menu
+    let settings = MenuItem::new(app, "Settings", true, None).unwrap();
+    let quit = MenuItem::new(app, "Quit", true, None).unwrap();
     menu.append(&settings).unwrap();
     menu.append(&quit).unwrap();
 
+    let settings_id = settings.id().clone();
+    let quit_id = quit.id().clone();
     let _tray = TrayIconBuilder::new()
         .menu(&menu)
-        .on_menu_event({
-            let settings_id = settings.id().clone();
-            let quit_id = quit.id().clone();
-            move |app, event| {
-                if event.id() == settings_id {
-                    let _ = app.emit("open-settings", ());
-                } else if event.id() == quit_id {
-                    app.exit(0);
-                }
+        .on_menu_event(move |app, event| {
+            if settings_id == event.id() {
+                let _ = app.emit("open-settings", ());
+            } else if quit_id == event.id() {
+                app.exit(0);
             }
         })
         .build(app)
@@ -66,10 +62,15 @@ fn main() {
 
             #[cfg(target_os = "windows")]
             {
-                use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
+                use raw_window_handle::{HasWindowHandle, RawWindowHandle};
                 if let Some(window) = app.get_window("main") {
-                    if let Ok(RawWindowHandle::Win32(handle)) = window.raw_window_handle() {
-                        println!("Win32 handle: {:?}", handle);
+                    if let Ok(h) = window.window_handle() {
+                        match h.as_raw() {
+                            RawWindowHandle::Win32(handle) => {
+                                println!("Win32 handle: {:?}", handle);
+                            }
+                            _ => {}
+                        }
                     }
                 }
             }
