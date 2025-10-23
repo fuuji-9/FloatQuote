@@ -33,6 +33,7 @@ html, body {
   font-size: 48px;
   font-weight: bold;
   color: white;
+  white-space: pre-line;
   text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
   max-width: 90vw;
   margin: 0; /* margins are set dynamically based on alignment */

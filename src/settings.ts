@@ -195,7 +195,7 @@ function bindInput<T extends HTMLElement>(id: string): T {
 }
 
 function toSettings(): Settings {
-  const text = (bindInput<HTMLInputElement>("text").value || DEFAULTS.text).toString();
+  const text = ((document.getElementById("text") as HTMLTextAreaElement | HTMLInputElement | null)?.value || DEFAULTS.text).toString();
   const fontFamily = bindInput<HTMLSelectElement>("fontFamily").value;
   const fontSize = Number(bindInput<HTMLInputElement>("fontSize").value) || DEFAULTS.fontSize;
   const letterSpacing = Number(bindInput<HTMLInputElement>("letterSpacing").value || DEFAULTS.letterSpacing);
@@ -214,7 +214,7 @@ function toSettings(): Settings {
 }
 
 function fillForm(s: Settings) {
-  bindInput<HTMLInputElement>("text").value = s.text;
+  (document.getElementById("text") as HTMLTextAreaElement | HTMLInputElement | null)!.value = s.text;
   bindInput<HTMLSelectElement>("fontFamily").value = s.fontFamily;
   bindInput<HTMLInputElement>("fontSize").value = String(s.fontSize);
   bindInput<HTMLInputElement>("letterSpacing").value = String(s.letterSpacing ?? DEFAULTS.letterSpacing);

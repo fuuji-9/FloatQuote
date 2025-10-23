@@ -51,7 +51,7 @@
       .row { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; }
       h2 { font-size: 2em; margin-top: 0; }
       label { min-width: 140px; color: var(--text); }
-      input[type="text"], input[type="number"], select {
+      input[type="text"], input[type="number"], select, textarea {
         padding: 6px 8px; width: 220px; color: var(--text);
         background: var(--row-bg); border: 1px solid var(--border);
       }
@@ -79,7 +79,7 @@
     <h3>Your Quote</h3>
     <div class="row">
       <label for="text">Text</label>
-      <input id="text" class="fill" type="text" placeholder="your text goes here" />
+      <textarea id="text" class="fill" rows="3" placeholder="your text goes here"></textarea>
     </div>
     <h3>Font Settings</h3>
     <div class="row">
