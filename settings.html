@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Widget Settings</title>
+    <script type="module" src="/src/settings.ts" defer></script>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 16px; }
+      .row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+      label { min-width: 140px; }
+      input[type="text"], input[type="number"], select { padding: 6px 8px; width: 220px; }
+      .preview { margin-top: 16px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; }
+      .actions { margin-top: 16px; display: flex; gap: 8px; }
+    </style>
+  </head>
+  <body>
+    <h2>Transparent Text Widget — Settings</h2>
+    <div class="row">
+      <label for="text">Text</label>
+      <input id="text" type="text" placeholder="your text goes here" />
+    </div>
+    <div class="row">
+      <label for="fontFamily">Font family</label>
+      <select id="fontFamily">
+        <option value="system-ui">System UI</option>
+        <option value="Lexend, sans-serif">Lexend</option>
+        <option value="Playfair Display, serif">Playfair Display</option>
+        <option value="DM Sans, sans-serif">DM Sans</option>
+        <option value="Bricolage Grotesque, sans-serif">Bricolage Grotesque</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="fontSize">Font size (px)</label>
+      <input id="fontSize" type="number" min="8" max="300" />
+    </div>
+    <div class="row">
+      <label for="color">Color</label>
+      <input id="color" type="color" />
+    </div>
+    <div class="row">
+      <label for="fontWeight">Font weight</label>
+      <select id="fontWeight">
+        <option value="300">Light</option>
+        <option value="400">Regular</option>
+        <option value="600">SemiBold</option>
+        <option value="700">Bold</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="textAlign">Horizontal align</label>
+      <select id="textAlign">
+        <option value="left">Left</option>
+        <option value="center">Center</option>
+        <option value="right">Right</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="verticalAlign">Vertical align</label>
+      <select id="verticalAlign">
+        <option value="flex-start">Top</option>
+        <option value="center">Center</option>
+        <option value="flex-end">Bottom</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="padding">Padding (px)</label>
+      <input id="padding" type="number" min="0" max="200" />
+    </div>
+    <div class="row">
+      <label for="clickThrough">Click-through overlay</label>
+      <input id="clickThrough" type="checkbox" />
+    </div>
+
+    <div class="preview">
+      <div id="preview-text">your text goes here</div>
+    </div>
+
+    <div class="actions">
+      <button id="close">Close</button>
+      <button id="reset">Reset</button>
+    </div>
+  </body>
+  </html>
+

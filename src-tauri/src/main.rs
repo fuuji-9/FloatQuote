@@ -1,47 +1,68 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use tauri::Manager;
-
-#[cfg(target_os = "windows")]
-use windows::Win32::UI::WindowsAndMessaging::{
-    GetWindowLongW, SetWindowLongW, GWL_EXSTYLE, WS_EX_NOREDIRECTIONBITMAP,
+use tauri::{
+    AppHandle, Manager, Window, WindowBuilder, Wry,
+    menu::{Menu, MenuItem},
+    tray::TrayIconBuilder,
 };
-#[cfg(target_os = "windows")]
-use windows::Win32::Foundation::HWND;
-#[cfg(target_os = "windows")]
-use windows::Win32::Graphics::Dwm::DwmExtendFrameIntoClientArea;
-use windows::Win32::UI::Controls::MARGINS;
-#[cfg(target_os = "windows")]
-use raw_window_handle::{HasWindowHandle, RawWindowHandle};
+use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
+
+#[tauri::command]
+fn set_click_through(window: Window, enabled: bool) {
+    let _ = window.set_ignore_cursor_events(enabled);
+}
+
+fn build_tray(app: &AppHandle<Wry>) {
+    let menu = Menu::new()
+        .add_item(MenuItem::new("settings", "Settings").unwrap())
+        .add_item(MenuItem::new("quit", "Quit").unwrap());
+
+    let _tray = TrayIconBuilder::new()
+        .menu(&menu)
+        .on_menu_event(|app, event| match event.id().as_str() {
+            "settings" => {
+                // Emit event to open settings window from JS side
+                let _ = app.emit("open-settings", ());
+            }
+            "quit" => {
+                app.exit(0);
+            }
+            _ => {}
+        })
+        .build(app)
+        .ok();
+}
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            Some(vec!["--hidden".into()]),
+        ))
+        .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_store::Builder::default().build())
+        .invoke_handler(tauri::generate_handler![set_click_through])
         .setup(|app| {
+            // Ensure main window exists with our overlay defaults
+            if app.get_window("main").is_none() {
+                let _ = WindowBuilder::new(app, "main")
+                    .title("")
+                    .decorations(false)
+                    .transparent(true)
+                    .resizable(false)
+                    .fullscreen(true)
+                    .build();
+            }
+
+            // Build the tray icon + menu
+            build_tray(app);
+
             #[cfg(target_os = "windows")]
             {
-                let window = app.get_webview_window("main").unwrap();
-
-                if let Ok(window_handle) = window.window_handle() {
-                    if let RawWindowHandle::Win32(handle) = window_handle.as_raw() {
-                        let hwnd = HWND(handle.hwnd.get() as _);
-                        unsafe {
-                            // Remove surface backing to eliminate shadow
-                            let ex_style = GetWindowLongW(hwnd, GWL_EXSTYLE);
-                            SetWindowLongW(
-                                hwnd,
-                                GWL_EXSTYLE,
-                                ex_style | WS_EX_NOREDIRECTIONBITMAP.0 as i32,
-                            );
-
-                            // Extend frame into full window to kill border
-                            let margins = MARGINS {
-                                cxLeftWidth: -1,
-                                cxRightWidth: -1,
-                                cyTopHeight: -1,
-                                cyBottomHeight: -1,
-                            };
-                            let _ = DwmExtendFrameIntoClientArea(hwnd, &margins);
-                        }
+                use raw_window_handle::{HasWindowHandle, RawWindowHandle};
+                if let Some(window) = app.get_window("main") {
+                    if let Ok(RawWindowHandle::Win32(handle)) = window.raw_window_handle() {
+                        println!("Win32 handle: {:?}", handle);
                     }
                 }
             }
