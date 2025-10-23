@@ -25,7 +25,7 @@ const DEFAULTS: Settings = {
   clickThrough: false,
 };
 
-const store = new Store(".widget-settings.json");
+let store: Store;
 
 function applyPreview(s: Settings) {
   const el = document.getElementById("preview-text") as HTMLElement | null;
@@ -94,6 +94,7 @@ async function applyAndBroadcast() {
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
+  store = await Store.load(".widget-settings.json");
   const s = await loadSettings();
   fillForm(s);
   applyPreview(s);
@@ -116,4 +117,3 @@ window.addEventListener("DOMContentLoaded", async () => {
     await applyAndBroadcast();
   });
 });
-

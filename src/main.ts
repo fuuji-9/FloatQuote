@@ -27,7 +27,7 @@ const DEFAULTS: Settings = {
   clickThrough: false,
 };
 
-const store = new Store(".widget-settings.json");
+let store: Store;
 
 function applySettings(s: Settings) {
   const root = document.getElementById("overlay-root") as HTMLElement | null;
@@ -57,7 +57,7 @@ async function loadSettings(): Promise<Settings> {
 
 async function ensureSettingsWindow() {
   const label = "settings";
-  const existing = WebviewWindow.getByLabel(label);
+  const existing = await WebviewWindow.getByLabel(label);
   if (existing) {
     await existing.setFocus();
     return;
@@ -73,6 +73,7 @@ async function ensureSettingsWindow() {
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
+  store = await Store.load(".widget-settings.json");
   const s = await loadSettings();
   applySettings(s);
 
