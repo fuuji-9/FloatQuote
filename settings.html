@@ -24,6 +24,7 @@
       input[type="text"], input[type="number"], select { padding: 6px 8px; width: 220px; }
       input.num { width: 200px; }
       .spacer { margin-left: 24px; }
+      .fill { flex: 1 1 auto; width: auto; }
       .preview { margin-top: 16px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; }
       .actions { margin-top: 16px; display: flex; gap: 8px; }
     </style>
@@ -33,7 +34,7 @@
     <h3>Your Quote</h3>
     <div class="row">
       <label for="text">Text</label>
-      <input id="text" type="text" placeholder="your text goes here" />
+      <input id="text" class="fill" type="text" placeholder="your text goes here" />
     </div>
     <h3>Font Settings</h3>
     <div class="row">
