@@ -1,8 +1,20 @@
 import { emit } from "@tauri-apps/api/event";
 import { Store } from "@tauri-apps/plugin-store";
+import { isEnabled as isAutostartEnabled, enable as enableAutostart, disable as disableAutostart } from "@tauri-apps/plugin-autostart";
 
 // Font manifest: available families and sources
-const FONT_MANIFEST: Record<string, { variable?: string; static?: Record<number, string> }> = {
+type FontSources = { variable?: string; static?: Record<number, string>; italicStatic?: Record<number, string> };
+const FONT_MANIFEST: Record<string, FontSources> = {
+  "Instrument Serif": {
+    static: {
+      400: "/fonts/Instrument_Serif/InstrumentSerif-Regular.ttf",
+    },
+  },
+  "Instrument Serif Italic": {
+    italicStatic: {
+      400: "/fonts/Instrument_Serif/InstrumentSerif-Italic.ttf",
+    },
+  },
   "Lexend": {
     variable: "/fonts/Lexend/Lexend-VariableFont_wght.ttf",
     static: {
@@ -84,6 +96,13 @@ function injectFontFaces(family: string) {
       css += `@font-face{font-family:'${family}';src:url('${url}') format('truetype');font-weight:${w};font-style:normal;font-display:swap;}`;
     }
   }
+  if (entry.italicStatic) {
+    const weights = Object.keys(entry.italicStatic).map(w => Number(w)).sort((a,b)=>a-b);
+    for (const w of weights) {
+      const url = entry.italicStatic[w]!;
+      css += `@font-face{font-family:'${family}';src:url('${url}') format('truetype');font-weight:${w};font-style:italic;font-display:swap;}`;
+    }
+  }
   style.textContent = css;
   document.head.appendChild(style);
 }
@@ -140,6 +159,7 @@ type Settings = {
   shadowOffsetX: number;
   shadowOffsetY: number;
   shadowBlur: number;
+  clickThrough: boolean;
 };
 
 const DEFAULTS: Settings = {
@@ -158,6 +178,7 @@ const DEFAULTS: Settings = {
   shadowOffsetX: 3,
   shadowOffsetY: 3,
   shadowBlur: 10,
+  clickThrough: true,
 };
 
 let store: Store;
@@ -210,7 +231,8 @@ function toSettings(): Settings {
   const shadowOffsetX = Number(bindInput<HTMLInputElement>("shadowOffsetX").value || DEFAULTS.shadowOffsetX);
   const shadowOffsetY = Number(bindInput<HTMLInputElement>("shadowOffsetY").value || DEFAULTS.shadowOffsetY);
   const shadowBlur = Number(bindInput<HTMLInputElement>("shadowBlur").value || DEFAULTS.shadowBlur);
-  return { text, fontFamily, fontSize, letterSpacing, color, fontWeight, textAlign, verticalAlign, padding, display, shadowColor, shadowOpacity, shadowOffsetX, shadowOffsetY, shadowBlur };
+  const clickThrough = (document.getElementById("clickThrough") as HTMLInputElement | null)?.checked ?? DEFAULTS.clickThrough;
+  return { text, fontFamily, fontSize, letterSpacing, color, fontWeight, textAlign, verticalAlign, padding, display, shadowColor, shadowOpacity, shadowOffsetX, shadowOffsetY, shadowBlur, clickThrough };
 }
 
 function fillForm(s: Settings) {
@@ -229,6 +251,8 @@ function fillForm(s: Settings) {
   bindInput<HTMLInputElement>("shadowOffsetX").value = String(s.shadowOffsetX);
   bindInput<HTMLInputElement>("shadowOffsetY").value = String(s.shadowOffsetY);
   bindInput<HTMLInputElement>("shadowBlur").value = String(s.shadowBlur);
+  const ct = document.getElementById("clickThrough") as HTMLInputElement | null;
+  if (ct) ct.checked = s.clickThrough;
 }
 
 async function applyAndBroadcast() {
@@ -247,6 +271,19 @@ window.addEventListener("DOMContentLoaded", async () => {
   injectFontFaces(s.fontFamily);
   populateWeights(s.fontFamily, s.fontWeight);
   fillForm(s);
+  // initialize autostart toggle
+  const autostartEl = document.getElementById("autostart") as HTMLInputElement | null;
+  if (autostartEl) {
+    try {
+      autostartEl.checked = await isAutostartEnabled();
+    } catch {}
+    autostartEl.addEventListener("change", async (e) => {
+      const checked = (e.target as HTMLInputElement).checked;
+      try {
+        if (checked) await enableAutostart(); else await disableAutostart();
+      } catch {}
+    });
+  }
   const themeSel = document.getElementById("themeMode") as HTMLSelectElement | null;
   if (themeSel) {
     themeSel.value = theme;
@@ -276,10 +313,13 @@ window.addEventListener("DOMContentLoaded", async () => {
   ].forEach((id) => bindInput<HTMLElement>(id).addEventListener("input", applyAndBroadcast));
 
   // update weights and load faces on family change
-  (document.getElementById("fontFamily") as HTMLSelectElement | null)?.addEventListener("change", (e) => {
+  (document.getElementById("fontFamily") as HTMLSelectElement | null)?.addEventListener("change", async (e) => {
     const fam = (e.target as HTMLSelectElement).value;
     injectFontFaces(fam);
+    // Repopulate weight options for the new family; selection becomes the first valid weight
     populateWeights(fam);
+    // Immediately persist and broadcast so overlay weight matches the UI selection
+    await applyAndBroadcast();
   });
 
   // no position grid; H/V selects already covered by input listeners

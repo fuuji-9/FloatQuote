@@ -3,7 +3,18 @@ import { Store } from "@tauri-apps/plugin-store";
 import { invoke } from "@tauri-apps/api/core";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
-const FONT_MANIFEST: Record<string, { variable?: string; static?: Record<number, string> }> = {
+type FontSources = { variable?: string; static?: Record<number, string>; italicStatic?: Record<number, string> };
+const FONT_MANIFEST: Record<string, FontSources> = {
+  "Instrument Serif": {
+    static: {
+      400: "/fonts/Instrument_Serif/InstrumentSerif-Regular.ttf",
+    },
+  },
+  "Instrument Serif Italic": {
+    italicStatic: {
+      400: "/fonts/Instrument_Serif/InstrumentSerif-Italic.ttf",
+    },
+  },
   "Lexend": {
     variable: "/fonts/Lexend/Lexend-VariableFont_wght.ttf",
     static: {
@@ -85,6 +96,13 @@ function injectFontFaces(family: string) {
       css += `@font-face{font-family:'${family}';src:url('${url}') format('truetype');font-weight:${w};font-style:normal;font-display:swap;}`;
     }
   }
+  if (entry.italicStatic) {
+    const weights = Object.keys(entry.italicStatic).map(w => Number(w)).sort((a,b)=>a-b);
+    for (const w of weights) {
+      const url = entry.italicStatic[w]!;
+      css += `@font-face{font-family:'${family}';src:url('${url}') format('truetype');font-weight:${w};font-style:italic;font-display:swap;}`;
+    }
+  }
   style.textContent = css;
   document.head.appendChild(style);
 }
@@ -104,6 +122,7 @@ type Settings = {
   shadowOffsetX: number;
   shadowOffsetY: number;
   shadowBlur: number;
+  clickThrough: boolean;
 };
 
 const DEFAULTS: Settings = {
@@ -122,6 +141,7 @@ const DEFAULTS: Settings = {
   shadowOffsetX: 3,
   shadowOffsetY: 3,
   shadowBlur: 10,
+  clickThrough: true,
 };
 
 let store: Store;
@@ -137,6 +157,8 @@ function applySettings(s: Settings) {
   textEl.style.letterSpacing = `${s.letterSpacing ?? DEFAULTS.letterSpacing}px`;
   textEl.style.color = s.color;
   textEl.style.fontWeight = s.fontWeight;
+  const isItalicFamily = /italic/i.test(s.fontFamily || "");
+  textEl.style.fontStyle = isItalicFamily ? "italic" : "normal";
   textEl.style.textAlign = s.textAlign;
   // ensure font files are available
   if (s.fontFamily && s.fontFamily !== "system-ui") {
@@ -156,8 +178,10 @@ function applySettings(s: Settings) {
   const bottom = s.verticalAlign === "flex-end" ? s.padding : s.verticalAlign === "center" ? s.padding : 0;
   textEl.style.margin = `${top}px ${right}px ${bottom}px ${left}px`;
   root.style.pointerEvents = "none";
-  // Ensure native click-through is on
-  invoke("set_click_through", { enabled: true }).catch(() => {});
+  // Click-through behavior
+  const enabled = s.clickThrough ?? DEFAULTS.clickThrough;
+  root.style.pointerEvents = enabled ? "none" : "auto";
+  invoke("set_click_through", { enabled }).catch(() => {});
   // Move to selected display
   invoke("set_overlay_display", { which: s.display }).catch(() => {});
 }
