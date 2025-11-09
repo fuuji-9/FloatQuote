@@ -1,0 +1,15 @@
+productName = "Tauri Transparent Text Widget"
+version = "0.1.0"
+identifier = "com.fuuji9.textwidget"
+
+[build]
+beforeDevCommand = "npm run dev"
+beforeBuildCommand = "npm run build"
+devUrl = "http://localhost:1420"
+frontendDist = "../dist"
+
+[app]
+windows = [
+  { label = "main", title = "", decorations = false, transparent = true, fullscreen = false, resizable = false, visible = true, shadow = false, dragDropEnabled = false, alwaysOnBottom = true, skipTaskbar = true }
+]
+withGlobalTauri = true
